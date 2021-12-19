@@ -1,3 +1,7 @@
+# Analysis of Jane Erye
+
+### By Shan Ness
+
 My project is text analysis. For this project, I am using five books
 from The Bronte sisters. I am using the gutenbergr package to access
 these books.
