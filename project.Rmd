@@ -1,20 +1,12 @@
 ---
 title: "Analysis of Jane Erye"
 output: md_document
----
-
----
-Shan Ness
+author: Shan Ness
 ---
 
 My project is text analysis. For this project, I am using five books from The Bronte sisters. I am using the gutenbergr package to access these books. 
 
-'Jane Eyre' is one of my favorite books. I think this is meaningful for me to use the NLP knowledge I learned from this class to do some text analysis on this book. Also, with other books from the writer's sisters. 
-
-The questions I want to research from the fundamental sentiment analysis are the most common positive and negative words, score positive and negative sentiment, give some words and find out the most common words in the book. Another question I want to research is TF-IDF measurement. TF-IDF is a statistical measure that evaluates how relevant a word is to a document in a collection of documents. This is done by multiplying two metrics: how many times a word appears in a document, and the inverse document frequency of the word across a set of documents.
-
-In the project report, I will use some tables, Figures to explaining and showing the results. This project is a review of the NLP course, also is a good way for me to review these books on the NLP side. 
-
+'Jane Eyre' is one of my favorite books. I thought it would be interesting to use a text analysis to get another perspective on one of my favorites.  I investigate the most common positive and negative words and score positive and negative sentiment. I also use TF-IDF to investigate how relevant a word is to a parts of the book.  I use some tables and figures to explain and show the results.
 
 **Sentiment analysis**
 ```{r setup, echo=FALSE, include=FALSE}
@@ -29,8 +21,9 @@ library(tidytext)
 
 
 ```
+
 I am analyzing the book ' Jane Eyre'. First, I will need to convert the text to a form that easy to use. The output is one token per word.  
-```{r, echo=FALSE}
+```{r download, echo=FALSE}
 
 janeeyre <- gutenberg_download(c(1260),
                              meta_fields = "author")
@@ -47,21 +40,19 @@ tidy_janeeyre
 
 The output has a lot of common words that don't contribute meaning to the book. So I need to filter out the stop-words. After filter out the stop words, here are the most common words from this book—order from high to low are: (n means how many times the word is used) 
 
-```{r, echo=FALSE}
+```{r filter-stopwords, echo=FALSE}
 tidy_books <- tidy_janeeyre %>%
   anti_join(stop_words)
 
 
 tidy_books %>%
   count(word, sort = TRUE) 
-
-
-
 ```
 
 
-I am using 'nrc' lexicon here. This lexicon is categorizes words in a binary fashion into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust..  Here is the most common ' fear' words in the book 'Jane Eyre'. 
-```{r, echo=FALSE}
+I am using 'nrc' lexicon here. This lexicon is categorizes words in a binary fashion into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust..  Here is the most common ' fear' words in the book 'Jane Eyre'.
+
+```{r sentiment, echo=FALSE}
 nrc_fear <- get_sentiments("nrc") %>%
   filter(sentiment == "fear")
 
@@ -71,8 +62,9 @@ tidy_janeeyre %>%
 
 ```
 
-Here is the most common 'joy' words in the book 'Jane Eyre'. 
-```{r, echo=FALSE}
+Here is the most common 'joy' words in the book 'Jane Eyre'.
+
+```{r common-words, echo=FALSE}
 nrc_joy <- get_sentiments("nrc") %>%
   filter(sentiment == "joy")
 
@@ -80,7 +72,7 @@ tidy_janeeyre %>%
   inner_join(nrc_joy) %>%
   count(word, sort = TRUE)
 ```
-```{r, echo=FALSE}
+```{r sentiment-joined, echo=FALSE}
 bronte_sentiment <- tidy_books %>%
   inner_join(get_sentiments("bing")) %>%
   count(author, index = linenumber %/% 80, sentiment) %>%
@@ -95,7 +87,7 @@ I have read this book many times, and I remember the storyline.
 At the beginning of the book, Jane lost her parents, and her cousins and aunt bully her. From the image, we can see lots of negative sentiment. 
 At the end of the story, Jane inherited some money and married the man she loves. There is a more positive sentiment at the end of the story from the image.  
 
-```{r plot sentiment scores}
+```{r plot-sentiment-scores}
 ggplot(bronte_sentiment, aes(index, sentiment, fill = author)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~author, ncol = 2, scales = "free_x")
@@ -103,7 +95,7 @@ ggplot(bronte_sentiment, aes(index, sentiment, fill = author)) +
 ```
 
 Here are the most common positive words and the most common negative words in 'Jane Eyre'.
-```{r, echo=FALSE}
+```{r bing-word-counts, echo=FALSE}
 bing_word_counts <- tidy_books %>%
   inner_join(get_sentiments("bing")) %>%
   count(word, sentiment, sort = TRUE) %>%
@@ -114,7 +106,7 @@ bing_word_counts
 
 
 Here is the visualization of the most common positive and negative words
-```{r}
+```{r sentiment-plots}
 bing_word_counts %>%
   group_by(sentiment) %>%
   slice_max(n, n = 10) %>%
@@ -129,12 +121,12 @@ bing_word_counts %>%
 
 Interestingly, 'miss' as a negative sentiment shows 310 times in this book.  This word more likely means young lady during that time; writers use a lot of 'miss' in the book. Maybe  'miss' should be the  'stop-words in Books in this era.  
 
-**frequency analysis: tf-idf**
+# frequency analysis: tf-idf
 
 
 Here are the most commonly used words in these five books from the Bronte Sisters.(n:how many times that word is used in the book. total: total number of words in the book)
 
-```{r, echo=FALSE}
+```{r words, echo=FALSE}
 
 bronte <- gutenberg_download(c(1260, 768, 969, 9182, 767),
                              meta_fields = "author")
@@ -154,7 +146,7 @@ bronte_words
 
 
 Here is the data visualization of the distribution of n/total for each book:
-```{r, echo=FALSE, warning=FALSE }
+```{r count-over-total, echo=FALSE, warning=FALSE }
 ggplot(bronte_words, aes(n/total, fill = author)) +
   geom_histogram(show.legend = FALSE) +
   xlim(NA, 0.0009) +
@@ -167,7 +159,7 @@ These figures show the long tailed distributions. Those words on the tail parts 
 Zipf's law states that the frequency that a word appears is inversely proportional to its rank.
 Examining Zipf's law for these books. (rank: the rank of each word within the frequency table)
 
-```{r, echo=FALSE}
+```{r freq-by-rank, echo=FALSE}
 freq_by_rank <- bronte_words %>%
   group_by(author) %>%
   mutate(rank = row_number(),
@@ -178,7 +170,7 @@ freq_by_rank
 ```
 
 
-```{r, echo=FALSE}
+```{r freq-by-rank-2, echo=FALSE}
 freq_by_rank %>% 
   ggplot(aes(rank, `term frequency`, color = author)) + 
   geom_line(size = 1.1, alpha = 0.8, show.legend = FALSE) + 
@@ -191,7 +183,7 @@ Zipf’s law is often visualized by plotting rank on the x-axis and term frequen
 
 
 The table below shows word frequency order from high to low. 
-```{r, echo=FALSE}
+```{r bronte-tf-idf, echo=FALSE}
 bronte_tf_idf <- bronte_words %>%
   bind_tf_idf(word, author, n)
 
@@ -199,7 +191,7 @@ bronte_tf_idf
 ```
 The table below shows words with high tf-idf.
 
-```{r, echo=FALSE}
+```{r tf-idf-table, echo=FALSE}
 bronte_tf_idf %>%
   select(-total) %>%
   arrange(desc(tf_idf))
@@ -209,7 +201,7 @@ From last two tables we can see that very common words' idf, tf-idf are zero. Th
 
 Here is the data-visualization of these words with high tf-idf:
 
-```{r,message=FALSE, warning=FALSE}
+```{r word-frequencies, message=FALSE, warning=FALSE}
 plot_bronte <- bronte_words %>%
   bind_tf_idf(word, author, n) %>%
   mutate(author = factor(author, levels = c("Brontë, Charlotte",
@@ -245,7 +237,7 @@ bronte_bigrams %>%
 The table below is the most common b-gram words without stop-words.
 
 Find the most common bigrams from these books:
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r bigram, echo=FALSE, message=FALSE, warning=FALSE}
 bigrams_separated <- bronte_bigrams %>%
   separate(bigram, c("word1", "word2"), sep = " ")
 
@@ -259,9 +251,8 @@ bigram_counts <- bigrams_filtered %>%
 bigram_counts
 ```
 
-
 The table below shows the bigrams with high tf-idf.
-```{r, echo=FALSE}
+```{r tf-idf, echo=FALSE}
 
 bigrams_united <- bigrams_filtered %>%
   unite(bigram, word1, word2, sep = " ")

@@ -1,31 +1,13 @@
-<table>
-<tbody>
-<tr class="odd">
-<td>Shan Ness</td>
-</tr>
-</tbody>
-</table>
-
 My project is text analysis. For this project, I am using five books
 from The Bronte sisters. I am using the gutenbergr package to access
 these books.
 
-‘Jane Eyre’ is one of my favorite books. I think this is meaningful for
-me to use the NLP knowledge I learned from this class to do some text
-analysis on this book. Also, with other books from the writer’s sisters.
-
-The questions I want to research from the fundamental sentiment analysis
-are the most common positive and negative words, score positive and
-negative sentiment, give some words and find out the most common words
-in the book. Another question I want to research is TF-IDF measurement.
-TF-IDF is a statistical measure that evaluates how relevant a word is to
-a document in a collection of documents. This is done by multiplying two
-metrics: how many times a word appears in a document, and the inverse
-document frequency of the word across a set of documents.
-
-In the project report, I will use some tables, Figures to explaining and
-showing the results. This project is a review of the NLP course, also is
-a good way for me to review these books on the NLP side.
+‘Jane Eyre’ is one of my favorite books. I thought it would be
+interesting to use a text analysis to get another perspective on one of
+my favorites. I investigate the most common positive and negative words
+and score positive and negative sentiment. I also use TF-IDF to
+investigate how relevant a word is to a parts of the book. I use some
+tables and figures to explain and show the results.
 
 **Sentiment analysis**
 
@@ -128,7 +110,7 @@ a more positive sentiment at the end of the story from the image.
       geom_col(show.legend = FALSE) +
       facet_wrap(~author, ncol = 2, scales = "free_x")
 
-![](project_files/figure-markdown_strict/plot%20sentiment%20scores-1.png)
+![](project_files/figure-markdown_strict/plot-sentiment-scores-1.png)
 
 Here are the most common positive words and the most common negative
 words in ‘Jane Eyre’.
@@ -162,14 +144,14 @@ Here is the visualization of the most common positive and negative words
       facet_wrap(~sentiment, scales = "free_y") +
       labs(x = "Contribution to sentiment", y = NULL)
 
-![](project_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](project_files/figure-markdown_strict/sentiment-plots-1.png)
 
 Interestingly, ‘miss’ as a negative sentiment shows 310 times in this
 book. This word more likely means young lady during that time; writers
 use a lot of ‘miss’ in the book. Maybe ‘miss’ should be the ’stop-words
 in Books in this era.
 
-**frequency analysis: tf-idf**
+# frequency analysis: tf-idf
 
 Here are the most commonly used words in these five books from the
 Bronte Sisters.(n:how many times that word is used in the book. total:
@@ -197,7 +179,7 @@ book:
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](project_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![](project_files/figure-markdown_strict/count-over-total-1.png)
 
 These figures show the long tailed distributions. Those words on the
 tail parts are very rare words.
@@ -221,7 +203,7 @@ the rank of each word within the frequency table)
     ## 10 Brontë, Anne      to     8123 239893     4           0.0339
     ## # … with 41,372 more rows
 
-![](project_files/figure-markdown_strict/unnamed-chunk-11-1.png) Zipf’s
+![](project_files/figure-markdown_strict/freq-by-rank-2-1.png) Zipf’s
 law is often visualized by plotting rank on the x-axis and term
 frequency on the y-axis, on logarithmic scales. Plotting this way, an
 inversely proportional relationship will have a constant, negative
@@ -285,7 +267,7 @@ Here is the data-visualization of these words with high tf-idf:
       labs(x = "tf-idf", y = NULL) +
       facet_wrap(~author, ncol = 2, scales = "free")
 
-![](project_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](project_files/figure-markdown_strict/word-frequencies-1.png)
 
 **words relationship by using n-grams**
 
